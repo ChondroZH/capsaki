@@ -1,0 +1,223 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #444;
+}
+
+#reset-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#reset-btn:hover {
+    background-color: #c82333;
+}
+
+.game-mode-container {
+    margin-bottom: 40px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+thead {
+    background-color: #007bff;
+    color: white;
+}
+
+tfoot {
+    font-weight: bold;
+    background-color: #eee;
+}
+
+.input-form {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.player-inputs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.player-inputs label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin-left: 5px;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.highlight {
+    background-color: #ffcccc;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { background-color: #ffcccc; }
+    50% { background-color: #ff9999; }
+    100% { background-color: #ffcccc; }
+}
+
+/* Confirmation Dialog Styles */
+.dialog {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 300px;
+}
+
+.dialog-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.dialog-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#confirm-yes {
+    background-color: #dc3545;
+    color: white;
+}
+
+#confirm-no {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* ------------------------------------------- */
+/* Mobile-Specific Styles                */
+/* ------------------------------------------- */
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    table {
+        font-size: 0.8em;
+    }
+
+    th, td {
+        padding: 8px 4px;
+    }
+
+    .table-container {
+        overflow-x: hidden;
+    }
+    
+    .player-inputs {
+        justify-content: space-between;
+    }
+
+    .player-inputs label {
+        width: 48%;
+        text-align: left;
+    }
+
+    input[type="number"] {
+        width: 60px;
+        box-sizing: border-box;
+    }
+}
