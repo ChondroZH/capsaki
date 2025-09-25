@@ -3,7 +3,7 @@ let highStakeRoundCount = 0;
 
 // Set up event listeners for both game modes
 setupGameMode('low', 2);
-setupGameMode('high', 4);
+setupGameMode('high', 5);
 
 // Setup reset button and dialog
 const resetButton = document.getElementById('reset-btn');
@@ -27,6 +27,7 @@ confirmNoBtn.addEventListener('click', () => {
 function setupGameMode(mode, multiplier) {
     const scoreInputs = document.querySelectorAll(`.score-input-${mode}`);
     const addRoundBtn = document.querySelector(`.add-round-btn-${mode}`);
+    const signButtons = document.querySelectorAll(`#${mode}-stake-mode .toggle-sign`);
     
     scoreInputs.forEach(input => {
         input.addEventListener('input', () => updateButtonState(scoreInputs, addRoundBtn));
@@ -34,12 +35,25 @@ function setupGameMode(mode, multiplier) {
 
     addRoundBtn.addEventListener('click', () => addRound(mode, multiplier));
 
+    // New event listener for the toggle sign buttons
+    signButtons.forEach((button, index) => {
+        button.addEventListener('click', () => toggleSign(scoreInputs[index]));
+    });
+
     updateButtonState(scoreInputs, addRoundBtn);
 }
 
 function updateButtonState(inputs, button) {
     const totalRoundScore = Array.from(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
     button.disabled = totalRoundScore !== 0;
+}
+
+function toggleSign(input) {
+    let currentValue = parseFloat(input.value) || 0;
+    input.value = currentValue * -1;
+    // Trigger input event to update button state
+    const event = new Event('input', { bubbles: true });
+    input.dispatchEvent(event);
 }
 
 function addRound(mode, multiplier) {
