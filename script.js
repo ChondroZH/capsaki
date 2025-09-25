@@ -35,9 +35,15 @@ function setupGameMode(mode, multiplier) {
 
     addRoundBtn.addEventListener('click', () => addRound(mode, multiplier));
 
-    // New event listener for the toggle sign buttons
-    signButtons.forEach((button, index) => {
-        button.addEventListener('click', () => toggleSign(scoreInputs[index]));
+    // Fix: Use a direct approach to toggle the sign.
+    signButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            // Get the parent label of the clicked button
+            const label = event.target.closest('label');
+            // Find the input field within that same label
+            const input = label.querySelector('input');
+            toggleSign(input);
+        });
     });
 
     updateButtonState(scoreInputs, addRoundBtn);
@@ -51,6 +57,7 @@ function updateButtonState(inputs, button) {
 function toggleSign(input) {
     let currentValue = parseFloat(input.value) || 0;
     input.value = currentValue * -1;
+    
     // Trigger input event to update button state
     const event = new Event('input', { bubbles: true });
     input.dispatchEvent(event);
