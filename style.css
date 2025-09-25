@@ -96,6 +96,22 @@ input[type="number"] {
     margin-left: 5px;
 }
 
+.toggle-sign {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 5px;
+    width: 35px;
+}
+
+.toggle-sign:hover {
+    background-color: #5a6268;
+}
+
 button {
     background-color: #28a745;
     color: white;
