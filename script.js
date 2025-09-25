@@ -1,239 +1,119 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+let lowStakeRoundCount = 0;
+let highStakeRoundCount = 0;
 
-.container {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 800px;
-}
+// Set up event listeners for both game modes
+setupGameMode('low', 2);
+setupGameMode('high', 5);
 
-h1, h2 {
-    text-align: center;
-    color: #444;
-}
+// Setup reset button and dialog
+const resetButton = document.getElementById('reset-btn');
+const confirmDialog = document.getElementById('confirm-dialog');
+const confirmYesBtn = document.getElementById('confirm-yes');
+const confirmNoBtn = document.getElementById('confirm-no');
 
-#reset-btn {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
+resetButton.addEventListener('click', () => {
+    confirmDialog.style.display = 'flex';
+});
 
-#reset-btn:hover {
-    background-color: #c82333;
-}
+confirmYesBtn.addEventListener('click', () => {
+    resetAll();
+    confirmDialog.style.display = 'none';
+});
 
-.game-mode-container {
-    margin-bottom: 40px;
-}
+confirmNoBtn.addEventListener('click', () => {
+    confirmDialog.style.display = 'none';
+});
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: center;
-    word-wrap: break-word;
-}
-
-thead {
-    background-color: #007bff;
-    color: white;
-}
-
-tfoot {
-    font-weight: bold;
-    background-color: #eee;
-}
-
-.input-form {
-    margin-top: 30px;
-    text-align: center;
-}
-
-.player-inputs {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
-.player-inputs label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-input[type="number"] {
-    width: 80px;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    text-align: center;
-    margin-left: 5px;
-}
-
-.toggle-sign {
-    background-color: #6c757d;
-    color: white;
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-left: 5px;
-    width: 35px;
-}
-
-.toggle-sign:hover {
-    background-color: #5a6268;
-}
-
-button {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #218838;
-}
-
-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.highlight {
-    background-color: #ffcccc;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { background-color: #ffcccc; }
-    50% { background-color: #ff9999; }
-    100% { background-color: #ffcccc; }
-}
-
-/* Confirmation Dialog Styles */
-.dialog {
-    display: none;
-    position: fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    justify-content: center;
-    align-items: center;
-}
-
-.dialog-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    max-width: 300px;
-}
-
-.dialog-buttons {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-around;
-}
-
-.dialog-buttons button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#confirm-yes {
-    background-color: #dc3545;
-    color: white;
-}
-
-#confirm-no {
-    background-color: #6c757d;
-    color: white;
-}
-
-/* ------------------------------------------- */
-/* Mobile-Specific Styles                */
-/* ------------------------------------------- */
-
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-
-    h2 {
-        font-size: 1.2em;
-    }
-
-    table {
-        font-size: 0.8em;
-    }
-
-    th, td {
-        padding: 8px 4px;
-    }
-
-    .table-container {
-        overflow-x: hidden;
-    }
+function setupGameMode(mode, multiplier) {
+    const scoreInputs = document.querySelectorAll(`.score-input-${mode}`);
+    const addRoundBtn = document.querySelector(`.add-round-btn-${mode}`);
+    const signButtons = document.querySelectorAll(`#${mode}-stake-mode .toggle-sign`);
     
-    .player-inputs {
-        justify-content: space-between;
+    scoreInputs.forEach(input => {
+        input.addEventListener('input', () => updateButtonState(scoreInputs, addRoundBtn));
+    });
+
+    addRoundBtn.addEventListener('click', () => addRound(mode, multiplier));
+
+    // New event listener for the toggle sign buttons
+    signButtons.forEach((button, index) => {
+        button.addEventListener('click', () => toggleSign(scoreInputs[index]));
+    });
+
+    updateButtonState(scoreInputs, addRoundBtn);
+}
+
+function updateButtonState(inputs, button) {
+    const totalRoundScore = Array.from(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+    button.disabled = totalRoundScore !== 0;
+}
+
+function toggleSign(input) {
+    let currentValue = parseFloat(input.value) || 0;
+    input.value = currentValue * -1;
+    // Trigger input event to update button state
+    const event = new Event('input', { bubbles: true });
+    input.dispatchEvent(event);
+}
+
+function addRound(mode, multiplier) {
+    const scoreInputs = document.querySelectorAll(`.score-input-${mode}`);
+    const scores = Array.from(scoreInputs).map(input => parseFloat(input.value) || 0);
+    const totalRoundScore = scores.reduce((sum, score) => sum + score, 0);
+
+    const tableBody = document.querySelector(`#${mode}-stake-mode tbody`);
+    
+    let roundCount;
+    if (mode === 'low') {
+        lowStakeRoundCount++;
+        roundCount = lowStakeRoundCount;
+    } else {
+        highStakeRoundCount++;
+        roundCount = highStakeRoundCount;
     }
 
-    .player-inputs label {
-        width: 48%;
-        text-align: left;
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${roundCount}</td>
+        <td>${scores[0]}</td>
+        <td>${scores[1]}</td>
+        <td>${scores[2]}</td>
+        <td>${scores[3]}</td>
+    `;
+
+    if (totalRoundScore !== 0) {
+        newRow.classList.add('highlight');
     }
 
-    input[type="number"] {
-        width: 60px;
-        box-sizing: border-box;
-    }
+    tableBody.appendChild(newRow);
+    updateTotalScores(scores, mode, multiplier);
+
+    scoreInputs.forEach(input => input.value = '');
+    document.querySelector(`.add-round-btn-${mode}`).disabled = true;
+}
+
+function updateTotalScores(roundScores, mode, multiplier) {
+    const totalCells = document.querySelectorAll(`#${mode}-stake-mode tfoot .total-p1, #${mode}-stake-mode tfoot .total-p2, #${mode}-stake-mode tfoot .total-p3, #${mode}-stake-mode tfoot .total-p4`);
+    
+    roundScores.forEach((score, index) => {
+        const currentTotal = parseFloat(totalCells[index].textContent);
+        const newTotal = currentTotal + (score * multiplier);
+        totalCells[index].textContent = newTotal;
+    });
+}
+
+function resetAll() {
+    // Reset Low Stake
+    lowStakeRoundCount = 0;
+    document.querySelector('#low-stake-mode tbody').innerHTML = '';
+    document.querySelectorAll('#low-stake-mode tfoot td:not(:first-child)').forEach(td => td.textContent = '0');
+    document.querySelectorAll('.score-input-low').forEach(input => input.value = '');
+    document.querySelector('.add-round-btn-low').disabled = true;
+
+    // Reset High Stake
+    highStakeRoundCount = 0;
+    document.querySelector('#high-stake-mode tbody').innerHTML = '';
+    document.querySelectorAll('#high-stake-mode tfoot td:not(:first-child)').forEach(td => td.textContent = '0');
+    document.querySelectorAll('.score-input-high').forEach(input => input.value = '');
+    document.querySelector('.add-round-btn-high').disabled = true;
 }
