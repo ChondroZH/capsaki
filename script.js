@@ -24,6 +24,9 @@ confirmNoBtn.addEventListener('click', () => {
     confirmDialog.style.display = 'none';
 });
 
+// Load saved data when the page loads
+loadData();
+
 function setupGameMode(mode, multiplier) {
     const scoreInputs = document.querySelectorAll(`.score-input-${mode}`);
     const addRoundBtn = document.querySelector(`.add-round-btn-${mode}`);
@@ -47,15 +50,13 @@ function setupGameMode(mode, multiplier) {
 }
 
 function updateButtonState(inputs, button) {
-    // Check if any input is blank. The .some() method returns true if at least one element in the array passes the test.
     const isAnyInputBlank = Array.from(inputs).some(input => input.value === '');
     
     if (isAnyInputBlank) {
         button.disabled = true;
-        return; // Exit the function early
+        return;
     }
 
-    // If no inputs are blank, then check if the total score is not zero
     const totalRoundScore = Array.from(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
     button.disabled = totalRoundScore !== 0;
 }
@@ -102,6 +103,8 @@ function addRound(mode, multiplier) {
 
     scoreInputs.forEach(input => input.value = '');
     document.querySelector(`.add-round-btn-${mode}`).disabled = true;
+
+    saveData();
 }
 
 function updateTotalScores(roundScores, mode, multiplier) {
@@ -112,6 +115,8 @@ function updateTotalScores(roundScores, mode, multiplier) {
         const newTotal = currentTotal + (score * multiplier);
         totalCells[index].textContent = newTotal;
     });
+    
+    saveData();
 }
 
 function resetAll() {
@@ -128,4 +133,60 @@ function resetAll() {
     document.querySelectorAll('#high-stake-mode tfoot td:not(:first-child)').forEach(td => td.textContent = '0');
     document.querySelectorAll('.score-input-high').forEach(input => input.value = '');
     document.querySelector('.add-round-btn-high').disabled = true;
+
+    saveData();
+}
+
+// ----------------------------------------------------
+// New Functions for Data Persistence
+// ----------------------------------------------------
+
+function saveData() {
+    const data = {
+        lowStake: {
+            roundCount: lowStakeRoundCount,
+            totalScores: {
+                p1: parseFloat(document.querySelector('#low-stake-mode .total-p1').textContent),
+                p2: parseFloat(document.querySelector('#low-stake-mode .total-p2').textContent),
+                p3: parseFloat(document.querySelector('#low-stake-mode .total-p3').textContent),
+                p4: parseFloat(document.querySelector('#low-stake-mode .total-p4').textContent),
+            },
+            rounds: document.querySelector('#low-stake-mode tbody').innerHTML,
+        },
+        highStake: {
+            roundCount: highStakeRoundCount,
+            totalScores: {
+                p1: parseFloat(document.querySelector('#high-stake-mode .total-p1').textContent),
+                p2: parseFloat(document.querySelector('#high-stake-mode .total-p2').textContent),
+                p3: parseFloat(document.querySelector('#high-stake-mode .total-p3').textContent),
+                p4: parseFloat(document.querySelector('#high-stake-mode .total-p4').textContent),
+            },
+            rounds: document.querySelector('#high-stake-mode tbody').innerHTML,
+        }
+    };
+
+    localStorage.setItem('gameData', JSON.stringify(data));
+}
+
+function loadData() {
+    const savedData = localStorage.getItem('gameData');
+    if (!savedData) return;
+
+    const data = JSON.parse(savedData);
+
+    // Restore Low Stake
+    lowStakeRoundCount = data.lowStake.roundCount;
+    document.querySelector('#low-stake-mode .total-p1').textContent = data.lowStake.totalScores.p1;
+    document.querySelector('#low-stake-mode .total-p2').textContent = data.lowStake.totalScores.p2;
+    document.querySelector('#low-stake-mode .total-p3').textContent = data.lowStake.totalScores.p3;
+    document.querySelector('#low-stake-mode .total-p4').textContent = data.lowStake.totalScores.p4;
+    document.querySelector('#low-stake-mode tbody').innerHTML = data.lowStake.rounds;
+
+    // Restore High Stake
+    highStakeRoundCount = data.highStake.roundCount;
+    document.querySelector('#high-stake-mode .total-p1').textContent = data.highStake.totalScores.p1;
+    document.querySelector('#high-stake-mode .total-p2').textContent = data.highStake.totalScores.p2;
+    document.querySelector('#high-stake-mode .total-p3').textContent = data.highStake.totalScores.p3;
+    document.querySelector('#high-stake-mode .total-p4').textContent = data.highStake.totalScores.p4;
+    document.querySelector('#high-stake-mode tbody').innerHTML = data.highStake.rounds;
 }
