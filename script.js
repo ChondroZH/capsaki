@@ -35,12 +35,9 @@ function setupGameMode(mode, multiplier) {
 
     addRoundBtn.addEventListener('click', () => addRound(mode, multiplier));
 
-    // Fix: Use a direct approach to toggle the sign.
     signButtons.forEach(button => {
         button.addEventListener('click', (event) => {
-            // Get the parent label of the clicked button
             const label = event.target.closest('label');
-            // Find the input field within that same label
             const input = label.querySelector('input');
             toggleSign(input);
         });
@@ -50,6 +47,15 @@ function setupGameMode(mode, multiplier) {
 }
 
 function updateButtonState(inputs, button) {
+    // Check if any input is blank. The .some() method returns true if at least one element in the array passes the test.
+    const isAnyInputBlank = Array.from(inputs).some(input => input.value === '');
+    
+    if (isAnyInputBlank) {
+        button.disabled = true;
+        return; // Exit the function early
+    }
+
+    // If no inputs are blank, then check if the total score is not zero
     const totalRoundScore = Array.from(inputs).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
     button.disabled = totalRoundScore !== 0;
 }
@@ -58,7 +64,6 @@ function toggleSign(input) {
     let currentValue = parseFloat(input.value) || 0;
     input.value = currentValue * -1;
     
-    // Trigger input event to update button state
     const event = new Event('input', { bubbles: true });
     input.dispatchEvent(event);
 }
